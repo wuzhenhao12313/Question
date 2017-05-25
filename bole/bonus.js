@@ -31,22 +31,31 @@
 //    20
 
 const bonus = ((n, arr) => {
-    let totalBonus = 0;
+    let [totalBonus, prevBonus] = [0, 0];
     arr.map((item, index) => {
-        let groupBunus = 1;
-        let additionalBonus = 0;
-        if (index === 0) {
-            additionalBonus = item > arr[index + 1] ? additionalBonus + 1 : additionalBonus;
-        } else if (index === n - 1) {
-            additionalBonus = item > arr[index - 1] ? additionalBonus + 1 : additionalBonus;
-        } else {
-            additionalBonus = item > arr[index + 1] ? additionalBonus + 1 : additionalBonus;
-            additionalBonus = item > arr[index - 1] ? additionalBonus + 1 : additionalBonus;
+            let [groupBonus, nextBonus] = [1, 0];
+            if (index > 0) {
+                groupBonus = item > arr[index - 1] ? groupBonus + prevBonus : groupBonus;
+            }
+            if (index < n - 1) {
+                let temp = item;
+                for (let i = index + 1; i < n - 1; i++) {
+                    if (arr[i] < temp) {
+                        nextBonus += 1;
+                        temp = arr[i];
+                    } else {
+                        break;
+                    }
+                }
+            }
+            groupBonus=nextBonus>groupBonus?nextBonus+1:groupBonus;
+            prevBonus = groupBonus;
+            totalBonus += groupBonus;
         }
-        groupBunus += additionalBonus;
-        totalBonus += groupBunus;
-    });
+    );
     return totalBonus;
 });
 
-console.log(bonus(10, [10, 20, 32, 12, 32, 45, 11, 21, 31, 41, 33]));
+console.log("total: "+ bonus(10, [20, 32, 12, 32, 45, 11, 21, 31, 41, 33]));
+console.log("total: "+ bonus(3, [10,20,10]));
+console.log("total: "+ bonus(5, [10,10,10,10,10]));
